@@ -1,11 +1,25 @@
 const express = require("express");
 const https = require("https");
+const bodyParser = require("body-parser");
 
 const app = express();
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.get("/", function(req, res){
 
-    const url = "https://api.openweathermap.org/data/2.5/weather?q=Paris&units=metric&appid=0e8f8ad6809e2e907a6242f77d5edd0e#"
+    res.sendFile(__dirname + "/index.html");
+
+})
+
+app.post("/", function(req, res){
+    
+
+
+    const query = req.body.cityName;
+    const apiKey = "0e8f8ad6809e2e907a6242f77d5edd0e#";
+    const unit = "metric";
+
+    const url = "https://api.openweathermap.org/data/2.5/weather?q=" + query + "&units=" + unit + "&appid=" + apiKey;
 
     https.get(url, function(response) {
 
@@ -17,7 +31,7 @@ app.get("/", function(req, res){
             const weatherDescription = weatherData.weather[0].description
             const icon = weatherData.weather[0].icon
             const imageURL = "http://openweathermap.org/img/wn/" + icon + "@2x.png"
-            res.write("<h1>The temperature in Paris is " + temp + " degree Celcius.</h1>");
+            res.write("<h1>The temperature in " + query + " is " + temp + " degree Celcius.</h1>");
             res.write("<p>The weather is currently " + weatherDescription + "</p>");
             res.write("<img src=" + imageURL +">");
             res.send()
